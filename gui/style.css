@@ -331,6 +331,12 @@ body {
 	align-items: center;
 	justify-content: center;
 	min-height: 200px;
+	flex-wrap: wrap;
+}
+
+.preview-content > * {
+	flex: 0 0 100%;
+	max-width: 100%;
 }
 
 .preview-content.bundle-active {

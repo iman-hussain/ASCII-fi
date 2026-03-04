@@ -498,6 +498,20 @@ async function updateImagePreview() {
 		return;
 	}
 
+	// If we're on the converted preview tab (preview.png or bundle.js),
+	// re-trigger the full conversion instead of showing raw ASCII HTML
+	if (dom.tabConvertedGif.classList.contains('active') || dom.tabConvertedBundle.classList.contains('active')) {
+		console.debug('[Preview] On converted tab — re-triggering conversion');
+		startConvert();
+		return;
+	}
+
+	// On the Original tab, keep showing the original image — don't replace with ASCII
+	if (dom.tabOriginal.classList.contains('active')) {
+		console.debug('[Preview] On Original tab — keeping original image visible');
+		return;
+	}
+
 	console.debug('[Preview] Updating ASCII preview for', state.selectedPath);
 
 	// Collect current parameters
@@ -544,11 +558,15 @@ async function updateImagePreview() {
 		const data = await resp.json();
 		if (data.ok && data.html) {
 			console.debug('[Preview] Received HTML, updating display');
-			// Show ASCII preview and hide original image
+			// Show ASCII preview and hide everything else
 			dom.asciiPreview.innerHTML = data.html;
 			dom.asciiPreview.classList.remove('hidden');
+			dom.previewVideoContainer.classList.add('hidden');
 			dom.previewImage.classList.add('hidden');
 			dom.previewVideo.classList.add('hidden');
+			dom.previewGif.classList.add('hidden');
+			dom.bundleIframe.classList.add('hidden');
+			dom.bundleViewer.classList.add('hidden');
 		} else {
 			console.error('[Preview] Invalid response:', data);
 		}
